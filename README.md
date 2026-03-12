@@ -1,5 +1,5 @@
 # 🚀 Machine Learning Portfolio
-**[Your Name]** | Aspiring ML Engineer
+**Rahul Singh** | Aspiring ML Engineer
 
 This repository contains a collection of my Machine Learning projects, focusing on solving real-world problems through data-driven insights.
 
@@ -17,8 +17,9 @@ This repository contains a collection of my Machine Learning projects, focusing 
 
 ### 🛠️ Core Skills
 - **Supervised Learning:** Linear/Logistic Regression, Decision Trees, Random Forests, XGBoost.
+- **Data Analytics:** Pandas, Matplotlib, Seaborn.
 - **Data Engineering:** Data cleaning, Feature Scaling, Handling Imbalanced Data (SMOTE).
-- **Tools:** Git, Jupyter Notebooks, Matplotlib, Seaborn.
+- **Tools:** Git, Jupyter Notebooks, Streamlit, Linux.
 
 ---
 
