@@ -80,8 +80,8 @@ The dataset contains policyholder records with health and lifestyle features use
 
 1. **Clone the repository**
    ```bash
-   https://github.com/KinSlay3rS/Machine-Learning-Projects/tree/main/insurance_claim
-   cd insurance_claim
+   https://github.com/KinSlay3rS/Machine-Learning-Projects.git
+   cd Machine-Learning-Projects/insurance_claim
    ```
 
 2. **Create a virtual environment (recommended)**

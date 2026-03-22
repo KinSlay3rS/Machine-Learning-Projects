@@ -75,8 +75,8 @@ The dataset contains credit applicant records with demographic and financial att
 
 1. **Clone the repository**
    ```bash
-   https://github.com/KinSlay3rS/Machine-Learning-Projects/tree/main/Fraud_detection
-   cd Fraud_detection
+   https://github.com/KinSlay3rS/Machine-Learning-Projects.git
+   cd Machine-Learning-Projects/Fraud_detection
    ```
 
 2. **Create a virtual environment (recommended)**

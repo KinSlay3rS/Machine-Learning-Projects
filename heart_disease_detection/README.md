@@ -73,8 +73,8 @@ The dataset contains **303 patient records** with **14 clinical features**:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/KinSlay3rS/heart_disease_detection.git
-   cd heart_disease_detection
+   git clone https://github.com/KinSlay3rS/Machine-Learning-Projects.git
+   cd Machine-Learning-Projects/heart_disease_detection
    ```
 
 2. **Create a virtual environment (recommended)**
