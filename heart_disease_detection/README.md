@@ -3,7 +3,6 @@
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python)
 ![Streamlit](https://img.shields.io/badge/Streamlit-deployed-red?style=flat-square&logo=streamlit)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-orange?style=flat-square&logo=scikit-learn)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 A machine learning web application that predicts the likelihood of heart disease in patients based on clinical features from the **UCI Heart Disease Dataset**. Built with scikit-learn and deployed interactively via **Streamlit**.
 
