@@ -1,179 +1,441 @@
-# 🔍 Financial Fraud Detection System
+# Fraud Detection Prediction System
 
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python)
-![Streamlit](https://img.shields.io/badge/Streamlit-deployed-red?style=flat-square&logo=streamlit)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-Pipeline-orange?style=flat-square&logo=scikit-learn)
-![Dataset](https://img.shields.io/badge/Dataset-German%20Credit%20Risk-yellow?style=flat-square)
+## Overview
 
-A machine learning system for detecting fraudulent financial transactions using the **German Credit Risk Dataset**. The model is trained on credit applicant data and deployed as an interactive web application via **Streamlit**, enabling real-time fraud risk assessment.
+This project is an end-to-end machine learning pipeline for detecting fraudulent financial transactions. The workflow includes:
 
----
+- Exploratory Data Analysis (EDA)
+- Feature Engineering
+- Data Preprocessing
+- Machine Learning Model Training
+- Fraud Prediction using a Streamlit Web Application
+- Model Serialization using Joblib
 
-## 📊 Model Performance
+The project is implemented using Python, Scikit-learn, Pandas, Seaborn, Matplotlib, and Streamlit.
 
-The trained pipeline achieves **94% overall accuracy** on the test set (1,908,786 samples).
+The repository contains:
 
-| Class | Precision | Recall | F1-Score | Support |
-|-------|-----------|--------|----------|---------|
-| 0 (Legitimate) | 1.00 | 0.94 | 0.97 | 1,906,322 |
-| 1 (Fraud) | 0.02 | 0.94 | 0.04 | 2,464 |
-| **Macro Avg** | **0.51** | **0.94** | **0.51** | **1,908,786** |
-| **Weighted Avg** | **1.00** | **0.94** | **0.97** | **1,908,786** |
-
-> ⚠️ **Note on Class Imbalance:** The dataset is highly imbalanced (~0.13% fraud cases). While recall for fraud (class 1) is strong at **94%**, the low precision (0.02) indicates a high false-positive rate — a known trade-off in fraud detection where catching all fraud cases is prioritized over false alarms.
-
-> **Confusion Matrix:**
-> TP (Fraud Caught): 2,323 · TN (Legit Correct): ~1.8M · FP: 105,267 · FN: 141
+- A Jupyter Notebook for data analysis and model training
+- A trained fraud detection pipeline
+- A Streamlit web application for real-time predictions
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
-```
-Fraud_detection/
-│
-├── app.py                              # Streamlit web application
-├── fraud_detection.ipynb               # EDA, model training & evaluation notebook
-├── fraud_detection_pipeline.pkl        # Serialized trained ML pipeline
-├── README.md
-└── .ipynb_checkpoints/                 # Jupyter auto-save checkpoints
-    ├── app-checkpoint.py
-    └── Untitled-checkpoint.ipynb
+```text
+.
+├── fraud_detection.ipynb          # Complete ML workflow and analysis
+├── app.py                         # Streamlit web application
+├── fraud_detection_pipeline.pkl   # Saved trained pipeline
+├── AIML_Dataset.csv               # Dataset used for training
+└── README.md                      # Project documentation
 ```
 
 ---
 
-## 📦 Dataset
+## Problem Statement
 
-**Source:** [German Credit Risk — With Target on Kaggle](https://www.kaggle.com/datasets/kabure/german-credit-data-with-risk)
+Financial fraud causes major losses in digital payment systems. Detecting suspicious transactions automatically can help financial institutions reduce risk and prevent fraudulent activities.
 
-The dataset contains credit applicant records with demographic and financial attributes used to assess credit/fraud risk.
+This project builds a binary classification model that predicts whether a transaction is:
+
+- Fraudulent (`1`)
+- Legitimate (`0`)
+
+---
+
+## Dataset Information
+
+The dataset contains transaction-related information such as:
 
 | Feature | Description |
-|---------|-------------|
-| `Age` | Age of the applicant |
-| `Sex` | Gender of the applicant |
-| `Job` | Job type (0–3, unskilled to highly skilled) |
-| `Housing` | Housing status (own / free / rent) |
-| `Saving accounts` | Savings account balance category |
-| `Checking account` | Checking account balance category |
-| `Credit amount` | Loan/credit amount requested (DM) |
-| `Duration` | Duration of credit in months |
-| `Purpose` | Purpose of the loan |
-| `Risk` | Target label — `good` (legitimate) or `bad` (fraud/risk) |
+|---|---|
+| `type` | Transaction type |
+| `amount` | Transaction amount |
+| `oldbalanceOrg` | Sender balance before transaction |
+| `newbalanceOrig` | Sender balance after transaction |
+| `oldbalanceDest` | Receiver balance before transaction |
+| `newbalanceDest` | Receiver balance after transaction |
+| `isFraud` | Target label |
+| `isFlaggedFraud` | Fraud flag from system |
+
+### Target Variable
+
+- `0` → Normal Transaction
+- `1` → Fraudulent Transaction
 
 ---
 
-## 🚀 Getting Started
+## Exploratory Data Analysis (EDA)
 
-### Prerequisites
+The notebook performs extensive exploratory analysis including:
 
-- Python 3.8+
-- pip
+### 1. Dataset Inspection
 
-### Installation
+- Shape of dataset
+- Data types
+- Missing value analysis
+- Duplicate value analysis
+- Fraud class distribution
 
-1. **Clone the repository**
-   ```bash
-   https://github.com/KinSlay3rS/Machine-Learning-Projects.git
-   cd Machine-Learning-Projects/Fraud_detection
-   ```
+### 2. Transaction Analysis
 
-2. **Create a virtual environment (recommended)**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate        # On Windows: venv\Scripts\activate
-   ```
+- Distribution of transaction types
+- Fraud rate by transaction type
+- Transaction amount distributions
+- Fraud patterns over time
+- Sender and receiver analysis
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 3. Visualization Techniques
 
-4. **Download the dataset**
-   Download from [Kaggle](https://www.kaggle.com/datasets/kabure/german-credit-data-with-risk) and place the file as:
-   ```
-   Fraud_detection/dataset/AIML_Dataset.csv
-   ```
+The project uses:
+
+- Bar plots
+- Histograms
+- Box plots
+- Count plots
+- Correlation heatmaps
+- Time-based fraud trend plots
+
+### Key Insights
+
+- Dataset is highly imbalanced
+- Fraud occurs mostly in:
+  - `TRANSFER`
+  - `CASH_OUT`
+- Certain balance patterns strongly correlate with fraudulent behavior
 
 ---
 
-## 🖥️ Running the App
+## Feature Engineering
+
+Additional balance-based features were created:
+
+```python
+balance_diff_Org = newbalanceOrig - oldbalanceOrg
+balance_diff_Dest = newbalanceDest - oldbalanceDest
+```
+
+Irrelevant columns such as:
+
+- `nameOrig`
+- `nameDest`
+- `isFlaggedFraud`
+
+were removed during preprocessing.
+
+---
+
+## Machine Learning Pipeline
+
+The project uses Scikit-learn Pipelines and ColumnTransformers.
+
+### Preprocessing
+
+#### Numerical Features
+
+Standardized using:
+
+```python
+StandardScaler()
+```
+
+#### Categorical Features
+
+Encoded using:
+
+```python
+OneHotEncoder(drop='first')
+```
+
+---
+
+## Model Used
+
+### Logistic Regression
+
+```python
+LogisticRegression(
+    class_weight='balanced',
+    max_iter=1000
+)
+```
+
+### Why Logistic Regression?
+
+- Fast and interpretable
+- Effective baseline for binary classification
+- Handles large datasets efficiently
+- Works well with standardized numerical data
+
+The `class_weight='balanced'` parameter helps address class imbalance.
+
+---
+
+## Train-Test Split
+
+The dataset is split using:
+
+```python
+train_test_split(
+    X,
+    y,
+    test_size=0.3,
+    stratify=y
+)
+```
+
+### Configuration
+
+- Training Data: 70%
+- Testing Data: 30%
+- Stratified sampling preserves fraud distribution
+
+---
+
+## Model Evaluation
+
+The notebook evaluates the model using:
+
+- Classification Report
+- Accuracy Score
+- Confusion Matrix
+
+### Metrics Evaluated
+
+- Precision
+- Recall
+- F1-score
+- Support
+
+The confusion matrix is visualized using:
+
+```python
+ConfusionMatrixDisplay
+```
+
+---
+
+## Model Serialization
+
+The trained pipeline is saved using Joblib:
+
+```python
+joblib.dump(model_pipe, "fraud_detection_pipeline.pkl")
+```
+
+This enables direct deployment without retraining.
+
+---
+
+## Streamlit Web Application
+
+The project includes a user-friendly Streamlit application for fraud prediction.
+
+### Features
+
+- Interactive transaction input form
+- Real-time fraud prediction
+- Fraud/Normal transaction status display
+- Simple and lightweight UI
+
+### Input Parameters
+
+Users provide:
+
+- Transaction Type
+- Transaction Amount
+- Sender Balances
+- Receiver Balances
+
+### Prediction Output
+
+- `Likely Fraud`
+- `Regular Transaction`
+
+---
+
+## Streamlit App Workflow
+
+1. User enters transaction details
+2. Input is converted into a Pandas DataFrame
+3. Saved ML pipeline processes the data
+4. Model predicts fraud probability/class
+5. Result is displayed on the interface
+
+---
+
+## Installation
+
+### 1. Clone Repository
+
+```bash
+git clone <repository-url>
+cd <repository-folder>
+```
+
+### 2. Create Virtual Environment (Optional)
+
+```bash
+python -m venv venv
+```
+
+Activate environment:
+
+#### Windows
+
+```bash
+venv\Scripts\activate
+```
+
+#### Linux / MacOS
+
+```bash
+source venv/bin/activate
+```
+
+---
+
+## Required Dependencies
+
+Install dependencies using:
+
+```bash
+pip install -r requirements.txt
+```
+
+### Main Libraries
+
+```text
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+streamlit
+joblib
+```
+
+---
+
+## Running the Streamlit Application
+
+Run the application using:
 
 ```bash
 streamlit run app.py
 ```
 
-The app will launch in your browser at `http://localhost:8501`.  
-Enter applicant details (age, credit amount, duration, etc.) to get an instant fraud risk prediction with confidence score.
+After execution, Streamlit will provide a local URL such as:
+
+```text
+http://localhost:8501
+```
+
+Open it in your browser.
 
 ---
 
-## 🔬 Notebook
+## Example Prediction
 
-The Jupyter notebook `fraud_detection.ipynb` covers the complete ML pipeline:
+### Sample Input
 
-- Exploratory Data Analysis (EDA) — class distribution, feature correlations
-- Data preprocessing — encoding, scaling, handling missing values
-- Handling class imbalance — oversampling / class weighting strategies
-- Model training, hyperparameter tuning, and cross-validation
-- Evaluation — confusion matrix, classification report, ROC-AUC
-- Exporting the full pipeline as `fraud_detection_pipeline.pkl`
+| Feature | Value |
+|---|---|
+| Transaction Type | TRANSFER |
+| Amount | 5000 |
+| Old Sender Balance | 10000 |
+| New Sender Balance | 5000 |
+| Old Receiver Balance | 0 |
+| New Receiver Balance | 5000 |
 
-To run the notebook:
-```bash
-jupyter notebook fraud_detection.ipynb
+### Example Output
+
+```text
+Prediction: 1
+Likely Fraud
 ```
 
 ---
 
-## 🧠 ML Pipeline Overview
+## Technologies Used
 
-```
-Raw CSV → Preprocessing → Encoding → Scaling → Classifier → fraud_detection_pipeline.pkl
-                                                                        ↓
-                                                              Streamlit App (app.py)
-```
+### Programming Language
 
-- **Preprocessing:** Missing value imputation, categorical encoding
-- **Scaling:** StandardScaler for numerical features
-- **Classifier:** Trained estimator optimized for high fraud recall
-- **Pipeline:** Full end-to-end `sklearn.Pipeline` serialized via `pickle`
-- **Deployment:** `app.py` loads `fraud_detection_pipeline.pkl` for live inference
+- Python
 
----
+### Data Analysis
 
-## 📋 Requirements
+- Pandas
+- NumPy
 
-Get requirement.txt file from main repo(same for all ml projects)
+### Visualization
 
----
+- Matplotlib
+- Seaborn
 
-## ⚠️ Imbalanced Data Notice
+### Machine Learning
 
-The dataset contains a significant class imbalance (~99.87% legitimate vs ~0.13% fraud). The model is tuned to **maximize recall for the fraud class** to minimize missed detections (false negatives), which is the primary concern in fraud detection systems. Techniques explored in the notebook include:
+- Scikit-learn
 
-- `class_weight='balanced'` in the classifier
-- SMOTE / RandomOverSampler from `imbalanced-learn`
-- Threshold tuning on prediction probabilities
+### Deployment
+
+- Streamlit
 
 ---
 
-## 🤝 Contributing
+## Future Improvements
 
-Contributions are welcome! Please open an issue or submit a pull request.
+Potential enhancements include:
 
-1. Fork the project
-2. Create your feature branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m 'Add your feature'`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Open a Pull Request
+- Using advanced models:
+  - Random Forest
+  - XGBoost
+  - LightGBM
+  - Neural Networks
+- Hyperparameter tuning
+- Fraud probability scoring
+- Real-time API deployment
+- Docker containerization
+- Cloud deployment
+- Handling extreme class imbalance using:
+  - SMOTE
+  - ADASYN
 
 ---
 
-## 🙏 Acknowledgements
+## Learning Outcomes
 
-- [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data)) — original German Credit dataset
-- [Kaggle – kabure](https://www.kaggle.com/datasets/kabure/german-credit-data-with-risk) — dataset hosting
-- [Streamlit](https://streamlit.io/) — web deployment framework
-- [imbalanced-learn](https://imbalanced-learn.org/) — tools for handling class imbalance
+This project demonstrates:
+
+- End-to-end ML workflow
+- Practical fraud analytics
+- Data preprocessing pipelines
+- Feature engineering
+- Binary classification
+- Model deployment with Streamlit
+- Pipeline serialization using Joblib
+
+---
+
+## File References
+
+### Streamlit Application
+
+The Streamlit interface implementation is available in:
+
+- `app.py`
+
+### Notebook
+
+The complete workflow including EDA, preprocessing, training, evaluation, and model saving is available in:
+
+- `fraud_detection.ipynb`
+
+---
+
+## Conclusion
+
+This project provides a complete fraud detection system capable of identifying suspicious financial transactions using machine learning. The integration of preprocessing pipelines, Logistic Regression, and a Streamlit frontend makes the system practical, modular, and deployment-ready for educational and prototype-level applications.
+
